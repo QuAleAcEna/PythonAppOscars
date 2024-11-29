@@ -45,7 +45,7 @@ Null values in NomineeIds after filling:", df['NomineeIds'].isna().sum())
     df['EntityId'] = assign_entity_id(df['NomineeIds'])
     
     # Save the processed dataframe
-    df.to_excel(output_file, index=False)
+    df.to_excel(output_file, index=False,sheet_name='oscars')
     print(f"\
 Processed data saved to: {output_file}")
     
