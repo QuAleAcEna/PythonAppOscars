@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+</head>
+<body>
+    <h1>Welcome to the Oscars Database</h1>
+    <ul>
+        <li><a href="/films/">Number of Films: {{ stats.n_films }}</a></li>
+        <li><a href="/nominees/">Number of Nominees: {{ stats.n_nominees }}</a></li>
+        <li><a href="/categories/">Number of Categories: {{ stats.n_categories }}</a></li>
+        <li><a href="/ceremonies/">Number of Ceremonies: {{ stats.n_cerimonies }}</a></li>
+    </ul>
+</body>
+</html>
+<form action="/search" method="get">
+    <label for="search_term">Search:</label>
+    <input type="text" id="search_term" name="search_term" placeholder="Search films, actors, awards, ceremonies..." required>
+    <button type="submit">Search</button>
+</form>
