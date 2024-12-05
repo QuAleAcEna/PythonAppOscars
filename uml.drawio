@@ -78,8 +78,8 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="VadKqfFd2xCVHJafNzhe-1" value="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="310" y="630" width="30" height="30" as="geometry" />
+        <mxCell id="VadKqfFd2xCVHJafNzhe-1" value="0..1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="305" y="630" width="40" height="30" as="geometry" />
         </mxCell>
         <mxCell id="VadKqfFd2xCVHJafNzhe-2" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;*&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="360" y="815" width="30" height="30" as="geometry" />
