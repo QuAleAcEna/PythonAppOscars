@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ film.name }}</title>
+</head>
+<body>
+    <h1>{{ film.name }}</h1>
+    <h2>Actors</h2>
+    <ul>
+        {% for actor in actors %}
+        <li>{{ actor.name }}</li>
+        {% else %}
+        <li>No actors found.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Nominations</h2>
+    <ul>
+        {% for nomination in nominations %}
+        <li>{{ nomination.category_name }} - {% if nomination.winner %}Winner{% else %}Nominee{% endif %}</li>
+        {% else %}
+        <li>No nominations found.</li>
+        {% endfor %}
+    </ul>
+    <button onclick="window.history.back()">Go Back</button>
+
+</body>
+</html>
+
