@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nominees</title>
+</head>
+<body>
+    <h1>Nominees Search Results</h1>
+    <form action="/nominees/search" method="get">
+        <label for="search_term">Search:</label>
+        <input type="text" id="search_term" name="search_term" placeholder="Search nominees" required>
+        <button type="submit">Search</button>
+    </form>
+    <a href="/">Back to Home</a>
+    <ul>
+        {% for nominee in nominees %}
+        <li>
+            <a href="/nominees/{{ nominee.id }}/">{{ nominee.name }}</a>
+        </li>
+        {% else %}
+        <li>No nominees found for your search.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">Back to Home</a>
+</body>
+</html>
