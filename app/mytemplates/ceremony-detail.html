@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceremony {{ ceremony.year }} - Ceremony {{ ceremony.ceremony }}</title>
+</head>
+<body>
+    <h1>Ceremony {{ ceremony.ceremony }} - Year: {{ ceremony.year }}</h1>
+    <a href="/ceremonies/">Back to Ceremonies List</a>
+    <h2>Categories</h2>
+    
+    {% for category_detail in category_details %}
+    <h3>{{ category_detail.category.name }}</h3>
+    <ul>
+        {% for nomination in category_detail.nominations %}
+        <li>
+            <a href="/nominations/{{ nomination.nomination_id }}/">{{ nomination.nomination_name }}</a>
+            {% if nomination.winner %} <strong>(Winner)</strong> {% endif %}
+        </li>
+        {% else %}
+        <li>No nominations found for this category.</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No categories found for this ceremony.</p>
+    {% endfor %}
+
+    <a href="/ceremonies/">Back to Ceremonies List</a>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Films</title>
+</head>
+<body>
+    <h1>Films</h1>
+    
+
+    <!-- Search Form for Films -->
+    <form action="/films/search" method="get">
+        <label for="film_search">Search Films:</label>
+        <input type="text" id="film_search" name="search_term" placeholder="Search films..." required>
+        <button type="submit">Search</button>
+    </form>
+    <a href="/">Back to Home</a>
+
+    <!-- Film List -->
+    <ul>
+        {% for film in films %}
+        <li><a href="/films/{{ film.id }}/">{{ film.name }}</a></li>
+        {% else %}
+        <li>No films found for your search.</li>
+        {% endfor %}
+    </ul>
+    
+    <a href="/">Back to Home</a>
+</body>
+</html>
