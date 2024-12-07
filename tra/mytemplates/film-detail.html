@@ -7,25 +7,19 @@
 </head>
 <body>
     <h1>{{ film.name }}</h1>
-    <h2>Actors</h2>
-    <ul>
-        {% for actor in actors %}
-        <li>{{ actor.name }}</li>
-        {% else %}
-        <li>No actors found.</li>
-        {% endfor %}
-    </ul>
 
     <h2>Nominations</h2>
     <ul>
         {% for nomination in nominations %}
-        <li>{{ nomination.category_name }} - {% if nomination.winner %}Winner{% else %}Nominee{% endif %}</li>
+        <li>
+            {{ nomination.category_name }} -
+            <a href="/nominations/{{ nomination.id }}/">{{ nomination.name }}</a> - 
+            {% if nomination.winner %}Winner{% else %}Nominee{% endif %}
+        </li>
         {% else %}
         <li>No nominations found.</li>
         {% endfor %}
     </ul>
-    <button onclick="window.history.back()">Go Back</button>
-
+    <a href="/films">Back to Film List</a>
 </body>
 </html>
-

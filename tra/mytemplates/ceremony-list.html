@@ -7,9 +7,10 @@
 </head>
 <body>
     <h1>Ceremonies</h1>
+    <a href="/">Back to Home</a>
     <ul>
         {% for ceremony in ceremonies %}
-        <li><a href="/ceremonies/{{ ceremony.cerimony }}/">Ceremony {{ ceremony.cerimony }} - Year: {{ ceremony.year }}</a></li>
+        <li><a href="/ceremonies/{{ ceremony.ceremony }}/">Ceremony {{ ceremony.ceremony }} - Year: {{ ceremony.year }}</a></li>
         {% else %}
         <li>No ceremonies found.</li>
         {% endfor %}

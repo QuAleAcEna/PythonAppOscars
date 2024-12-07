@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ nominee.name }} - Nominations & Awards</title>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
 </head>
 <body>
     <h1>{{ nominee.name }}'s Nominations & Awards</h1>
@@ -12,13 +17,23 @@
         {% for nomination in nominations %}
         <li>
             {{ nomination.category }} - 
-            {% if nomination.winner %} <strong>Winner</strong> {% else %} Nominee {% endif %}
+            {% if nomination.film %}
+                {{ nomination.film }}
+            {% else %}
+                No film associated
+            {% endif %}
+            ({{ nomination.year }}) - 
+            {% if nomination.winner %} 
+                <strong>Winner</strong> 
+            {% else %} 
+                Nominee 
+            {% endif %}
         </li>
         {% else %}
         <li>No nominations found for this nominee.</li>
         {% endfor %}
     </ul>
+    <button onclick="goBack()">Go Back</button>
 
-    <a href="/nominees/">Back to Nominee List</a>
 </body>
 </html>

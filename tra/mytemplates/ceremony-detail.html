@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ceremony {{ ceremony.year }} - Ceremony {{ ceremony.cerimony }}</title>
+    <title>Ceremony {{ ceremony.year }} - Ceremony {{ ceremony.ceremony }}</title>
 </head>
 <body>
-    <h1>Ceremony {{ ceremony.cerimony }} - Year: {{ ceremony.year }}</h1>
-    <button onclick="window.history.back()">Go Back</button>
+    <h1>Ceremony {{ ceremony.ceremony }} - Year: {{ ceremony.year }}</h1>
+    <a href="/ceremonies/">Back to Ceremonies List</a>
     <h2>Categories</h2>
     
     {% for category_detail in category_details %}
     <h3>{{ category_detail.category.name }}</h3>
     <ul>
-        {% for nominee in category_detail.nominees %}
+        {% for nomination in category_detail.nominations %}
         <li>
-            {{ nominee.name }} {% if nominee.winner %} <strong>(Winner)</strong> {% endif %}
+            <a href="/nominations/{{ nomination.nomination_id }}/">{{ nomination.nomination_name }}</a>
+            {% if nomination.winner %} <strong>(Winner)</strong> {% endif %}
         </li>
         {% else %}
-        <li>No nominees found for this category.</li>
+        <li>No nominations found for this category.</li>
         {% endfor %}
     </ul>
     {% else %}
