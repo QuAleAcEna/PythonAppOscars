@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winner Result</title>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</head>
+<body>
+    <h1>Winner Result</h1>
+    {% if result %}
+        <p>Category: {{ result.category }}</p>
+        <p>Year: {{ result.year }}</p>
+        <p>Winner: 
+            {% if result.nomination_id %}
+                <a href="/nominations/{{ result.nomination_id }}/">{{ result.winner }}</a>
+            {% else %}
+                No nominee found for this winner
+            {% endif %}
+        </p>
+    {% else %}
+        <p>{{ error }}</p>
+    {% endif %}
+    <button onclick="goBack()">Go Back</button>
+</body>
+</html>

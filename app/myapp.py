@@ -64,7 +64,32 @@ def index():
             nominations desc
         limit 10;
     ''').fetchall()
-    return render_template('index.html', stats=stats,  most_film_oscars=most_film_oscars,most_nominations_films=most_nominations_films)
+    
+    most_awarded_person = mydb.execute('''
+        SELECT n.name, COUNT(ne.nomination) AS oscars
+        FROM Nominees n
+        JOIN NominationEntities ne ON n.id = ne.nominee
+        JOIN Nominations no ON ne.nomination = no.id
+        WHERE no.winner = 1 AND n.percomp = 'person'
+        GROUP BY n.name
+        ORDER BY oscars DESC
+        LIMIT 1;
+    ''').fetchone()
+
+    
+    most_awarded_company = mydb.execute('''
+        SELECT n.name, COUNT(ne.nomination) AS oscars
+        FROM Nominees n
+        JOIN NominationEntities ne ON n.id = ne.nominee
+        JOIN Nominations no ON ne.nomination = no.id
+        WHERE no.winner = 1 AND n.percomp = 'company'
+        GROUP BY n.name
+        ORDER BY oscars DESC
+        LIMIT 1;
+    ''').fetchone()
+
+
+    return render_template('index.html', stats=stats,  most_film_oscars=most_film_oscars,most_nominations_films=most_nominations_films, most_awarded_person=most_awarded_person, most_awarded_company=most_awarded_company)
 
 # Films
 @APP.route('/films/')
@@ -247,3 +272,43 @@ def get_nomination_detail(nomination_id):
     film_id = result[0]['film_id'] if result else None
     # Render the nomination-detail template with the nomination data
     return render_template('nomination-detail.html', nominees=nominees,film_id=film_id)
+
+
+@APP.route('/search_winner', methods=['GET', 'POST'])
+def search_winner():
+    if request.method == 'POST':
+        # Normalize inputs to handle case insensitivity
+        category = request.form.get('category', '').strip().lower()
+        year_input = request.form.get('year', '').strip()
+
+        # Handle empty inputs
+        if not category or not year_input:
+            return render_template('winner-result.html', error="Both category and year are required!")
+
+        
+            # Query the winner, handling both full year and range formats
+        result = mydb.execute('''
+                SELECT 
+                    LOWER(c.name) AS category,
+                    cer.year,
+                    nom.name AS winner,
+                    nom.id as nomination_id
+                FROM Nominations nom
+                JOIN Categories c ON nom.category = c.id
+                JOIN Ceremonies cer ON nom.ceremony = cer.ceremony
+                WHERE LOWER(c.name) = ? 
+                  AND (
+                      cer.year = ? OR
+                      CAST(SUBSTR(cer.year, 1, 4) AS INTEGER) + 1 = CAST(? AS INTEGER)
+                  )
+                  AND nom.winner = 1;
+            ''', [category, year_input, year_input]).fetchone()
+
+        if result:
+                return render_template('winner-result.html', result=result)
+        else:
+                return render_template('winner-result.html', error="No winner found for this category and year.")
+        
+
+    # Render the search form
+    return render_template('winner-search.html')
