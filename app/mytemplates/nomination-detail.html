@@ -20,21 +20,24 @@
             {% for nominee in nominees %}
                 <li>
                     <a href="/nominees/{{ nominee.id }}/">{{ nominee.name }}</a>
-                    {% if nominee.detail %}
-                        <p><strong>Detail:</strong> {{ nominee.detail }}</p>
-                    {% endif %}
-                    {% if nominee.note %}
-                        <p><strong>Note:</strong> {{ nominee.note }}</p>
-                    {% endif %}
-                    {% if nominee.citation %}
-                        <p><strong>Citation:</strong> {{ nominee.citation }}</p>
-                    {% endif %}
                 </li>
             {% endfor %}
         {% else %}
             <li>No nominee associated</li>
         {% endif %}
     </ul>
+    <!-- Display detail, note, and citation once -->
+    {% if nominees and nominees[0].detail %}
+        <p><strong>Detail:</strong> {{ nominees[0].detail }}</p>
+    {% endif %}
+    {% if nominees and nominees[0].note %}
+        <p><strong>Note:</strong> {{ nominees[0].note }}</p>
+    {% endif %}
+    {% if nominees and nominees[0].citation %}
+        <p><strong>Citation:</strong> {{ nominees[0].citation }}</p>
+    {% endif %}
+
+    
     <button onclick="goBack()">Go Back</button>
 </body>
 </html>
