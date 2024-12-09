@@ -91,11 +91,11 @@ def index():
      select distinct
          c.year,
          cat.original_name as category,
-            n.name as nominee,
+            nom.name as nominee,
             f.name as film
             
-        from nominations n join nominationentities e on e.nominee=n.id join nominations nom on nom.id=e.nomination
-             left join films f on f.id=nom.film join ceremonies c on c.ceremony=nom.ceremony
+        from  nominations nom
+                join films f on f.id=nom.film join ceremonies c on c.ceremony=nom.ceremony
              join categories cat on cat.id=nom.category
         where 
             nom.multifilm_nomination=1;
