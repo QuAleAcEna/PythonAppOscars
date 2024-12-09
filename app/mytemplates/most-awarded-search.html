@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Most Awarded Movie</title>
+</head>
+<body>
+    <h1>Search for the Most Awarded Movie in a Year</h1>
+    <form method="POST">
+        <label for="year">Enter Year:</label>
+        <input type="text" id="year" name="year" required>
+        <button type="submit">Search</button>
+    </form>
+    <a href="/">Back to Home</a>
+    <h2>Most Awarded Films by Ceremony</h2>
+    <ul>
+        {% for item in ceremony_data %}
+        <li>
+            <strong>{{ item.year }}</strong>: 
+            <a href="/films/{{ item.film_id }}">{{ item.film_name }}</a>
+
+            ({{ item.total_oscars }} Oscars)
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="/">Back to Home</a>
+</body>
+</html>

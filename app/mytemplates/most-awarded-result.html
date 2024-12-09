@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Most Awarded Movie Result</title>
+</head>
+<body>
+    <h1>Most Awarded Movie Result</h1>
+    {% if error %}
+        <p>{{ error }}</p>
+    {% else %}
+        <p>In {{ year }}, the movie(s) with the most Oscars were:</p>
+        <ul>
+            {% for film in result %}
+                <li>
+                    <a href="/films/{{ film.film_id }}">
+                        <strong>{{ film.film_name }}</strong>
+                    </a> with {{ film.total_oscars }} Oscars
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <a href="/search_most_awarded">Back to Search</a>
+</body>
+</html>

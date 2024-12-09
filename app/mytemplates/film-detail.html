@@ -7,14 +7,22 @@
 </head>
 <body>
     <h1>{{ film.name }}</h1>
-
+    <h2>Total Oscars</h2>
+    <p>
+        {% if nominations.total > 0 %}
+            {{ nominations.total }} Oscars won.
+        {% else %}
+            This film has not won any Oscars.
+        {% endif %}
+    </p>
+    
     <h2>Nominations</h2>
     <ul>
-        {% for nomination in nominations %}
+        {% for nomination in nominations.list %}
         <li>
             {{ nomination.category_name }} -
             <a href="/nominations/{{ nomination.id }}/">{{ nomination.name }}</a> - 
-            {% if nomination.winner %}Winner{% else %}Nominee{% endif %}
+            {% if nomination.winner %}<b>Winner</b>{% else %}Nominee{% endif %}
         </li>
         {% else %}
         <li>No nominations found.</li>

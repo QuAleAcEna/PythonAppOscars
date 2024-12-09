@@ -106,26 +106,41 @@ def list_films():
 def get_film(id):
     # Get the film details
     film = mydb.execute('''
-        SELECT id, name FROM Films WHERE id = ?
+        SELECT id, name 
+        FROM Films 
+        WHERE id = ?
     ''', [id]).fetchone()
 
     if not film:
         abort(404, 'Film not found')
 
-    # Get the actors for the film from the NominationFilms and Nominees tables
-
-
     # Get the nominations (awards) for the film
     nominations = mydb.execute('''
-        SELECT Categories.name as category_name, Nominations.winner,nominations.name,nominations.id
+        SELECT 
+            Categories.name as category_name, 
+            Nominations.winner,
+            Nominations.name,
+            Nominations.id
         FROM Nominations
         JOIN Categories ON Nominations.category = Categories.id
-        
-        
         WHERE Nominations.film = ?
     ''', [id]).fetchall()
 
-    return render_template('film-detail.html', film=film, nominations=nominations)
+    # Calculate the total Oscars (where winner = 1)
+    total_oscars = mydb.execute('''
+        SELECT COUNT(*) AS total
+        FROM Nominations
+        WHERE film = ? AND winner = 1
+    ''', [id]).fetchone()['total']  # Extract the total count
+
+    # Pass nominations as a dictionary with total
+    nominations_data = {
+        'list': nominations,
+        'total': total_oscars  # Total is passed directly as an integer
+    }
+
+    return render_template('film-detail.html', film=film, nominations=nominations_data)
+
 
 @APP.route('/films/search', methods=['GET'])
 def search_films():
@@ -289,7 +304,7 @@ def search_winner():
             # Query the winner, handling both full year and range formats
         result = mydb.execute('''
                 SELECT 
-                    LOWER(c.name) AS category,
+                    c.name AS category,
                     cer.year,
                     nom.name AS winner,
                     nom.id as nomination_id
@@ -297,12 +312,14 @@ def search_winner():
                 JOIN Categories c ON nom.category = c.id
                 JOIN Ceremonies cer ON nom.ceremony = cer.ceremony
                 WHERE LOWER(c.name) = ? 
-                  AND (
-                      cer.year = ? OR
-                      CAST(SUBSTR(cer.year, 1, 4) AS INTEGER) + 1 = CAST(? AS INTEGER)
-                  )
+                    AND (
+                      cer.year = cast(? as integer) 
+                    or (cer.year != cast(? as integer)
+                              
+                        and CAST(SUBSTR(cer.year, 6, 7) AS INTEGER)  = cast(substr(?,3,4) as integer))
+                )
                   AND nom.winner = 1;
-            ''', [category, year_input, year_input]).fetchone()
+            ''', [category, year_input, year_input,year_input]).fetchone()
 
         if result:
                 return render_template('winner-result.html', result=result)
@@ -312,3 +329,68 @@ def search_winner():
 
     # Render the search form
     return render_template('winner-search.html')
+
+@APP.route('/search_most_awarded', methods=['GET', 'POST'])
+def search_most_awarded():
+    if request.method == 'POST':
+        year = request.form.get('year', '').strip()
+
+        # Validate the input
+        if not year.isdigit():
+            return render_template('most-awarded-result.html', error="Please enter a valid year, between 1928 and 2023.")
+
+        # Query for the movie with the most Oscars in the given year
+        result = mydb.execute('''
+           WITH FilmAwards AS (
+                SELECT f.name AS film_name, COUNT(n.id) AS total_oscars,f.id as film_id,cer.year
+                FROM Nominations n
+                JOIN Films f ON n.film = f.id
+                JOIN Ceremonies cer ON n.ceremony = cer.ceremony
+                WHERE n.winner = 1                     AND (
+                      cer.year = cast(? as integer) 
+                    or (cer.year != cast(? as integer)
+                              
+                        and CAST(SUBSTR(cer.year, 6, 7) AS INTEGER)  = cast(substr(?,3,4) as integer))
+                )
+                GROUP BY f.name
+            )
+            SELECT film_name, total_oscars, film_id,year
+            FROM FilmAwards
+            WHERE total_oscars = (SELECT MAX(total_oscars) FROM FilmAwards)
+            ORDER BY total_oscars DESC;
+        ''', [year,year,year]).fetchall()
+
+        if result:
+            return render_template('most-awarded-result.html', year=year, result=result)
+        else:
+            return render_template('most-awarded-result.html', year=year, error="No data found, select a year between 1928 and 2023.")
+
+    # Fetch the most awarded films by ceremony for display
+    ceremony_query = '''
+    WITH film_oscars AS (
+        SELECT cer.year, f.name AS film_name, COUNT(n.id) AS total_oscars, f.id as film_id
+        FROM Nominations n
+        JOIN Films f ON n.film = f.id
+        JOIN Ceremonies cer ON n.ceremony = cer.ceremony
+        WHERE n.winner = 1
+        GROUP BY cer.year, f.name
+    ),
+    max_oscars AS (
+        SELECT year, MAX(total_oscars) AS max_oscars
+        FROM film_oscars
+        GROUP BY year
+    )
+    SELECT fo.year, fo.film_name, fo.total_oscars,fo.film_id
+    FROM film_oscars fo
+    JOIN max_oscars mo ON fo.year = mo.year
+    WHERE fo.total_oscars = mo.max_oscars
+    ORDER BY
+        CASE
+            WHEN fo.year LIKE '%/%' THEN CAST(SUBSTR(fo.year, 1, 4) AS INTEGER)
+            ELSE CAST(fo.year AS INTEGER)
+        END ASC,
+        fo.total_oscars DESC;
+    '''
+    ceremony_data = mydb.execute(ceremony_query).fetchall()
+
+    return render_template('most-awarded-search.html', ceremony_data=ceremony_data)
