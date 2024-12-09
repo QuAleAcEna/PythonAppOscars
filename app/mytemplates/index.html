@@ -39,8 +39,23 @@
         <li>{{ most_awarded_person.name }} - {{ most_awarded_person.oscars }} Oscars</li>
     </ul>
     <h3>Most Awarded Company</h3>
+    
     <ul>
         <li>{{ most_awarded_company.name }} - {{ most_awarded_company.oscars }} Oscars</li>
+    </ul>
+    <h2>Multifilm nominees</h2>
+    <p>Here is the list of people that in the same year and category where nominated due to more than 1 film</p>
+    <ul>
+        {% if multinom %}
+            {% for row in multinom %}
+                <li>
+                    {{ row.year }}: {{ row.nominee }} for 
+                    <strong>{{ row.category }}</strong> ({{ row.film }})
+                </li>
+            {% endfor %}
+        {% else %}
+            <li>No records found.</li>
+        {% endif %}
     </ul>
 </body>
 </html>

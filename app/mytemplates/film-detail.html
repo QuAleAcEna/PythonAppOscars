@@ -20,7 +20,7 @@
     <ul>
         {% for nomination in nominations.list %}
         <li>
-            {{ nomination.category_name }} -
+            {{ nomination.category_name }}({{nomination.year}}) -
             <a href="/nominations/{{ nomination.id }}/">{{ nomination.name }}</a> - 
             {% if nomination.winner %}<b>Winner</b>{% else %}Nominee{% endif %}
         </li>

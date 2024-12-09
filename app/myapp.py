@@ -87,9 +87,21 @@ def index():
         ORDER BY oscars DESC
         LIMIT 1;
     ''').fetchone()
+    multinom=mydb.execute('''
+     select distinct
+         c.year,
+         cat.original_name as category,
+            n.name as nominee,
+            f.name as film
+            
+        from nominations n join nominationentities e on e.nominee=n.id join nominations nom on nom.id=e.nomination
+             left join films f on f.id=nom.film join ceremonies c on c.ceremony=nom.ceremony
+             join categories cat on cat.id=nom.category
+        where 
+            nom.multifilm_nomination=1;
+                          ''').fetchall()
 
-
-    return render_template('index.html', stats=stats,  most_film_oscars=most_film_oscars,most_nominations_films=most_nominations_films, most_awarded_person=most_awarded_person, most_awarded_company=most_awarded_company)
+    return render_template('index.html', stats=stats,  most_film_oscars=most_film_oscars,most_nominations_films=most_nominations_films, most_awarded_person=most_awarded_person, most_awarded_company=most_awarded_company,multinom=multinom)
 
 # Films
 @APP.route('/films/')
@@ -120,9 +132,10 @@ def get_film(id):
             Categories.name as category_name, 
             Nominations.winner,
             Nominations.name,
-            Nominations.id
+            Nominations.id,
+            c.year
         FROM Nominations
-        JOIN Categories ON Nominations.category = Categories.id
+        JOIN Categories ON Nominations.category = Categories.id join ceremonies c on c.ceremony=nominations.ceremony
         WHERE Nominations.film = ?
     ''', [id]).fetchall()
 
@@ -272,7 +285,11 @@ def get_nomination_detail(nomination_id):
         SELECT 
             nm.id AS nominee_id,
             nm.name AS name, 
-            f.id AS film_id
+            f.id AS film_id,
+            f.name AS film,
+            n.detail,
+            n.note,
+            n.citation
         FROM 
             nominees nm 
             JOIN nominationentities e ON nm.id = e.nominee
@@ -282,11 +299,27 @@ def get_nomination_detail(nomination_id):
     ''', [nomination_id]).fetchall()
 
     if not result:
-        result=[]
-    nominees= [{'id': row['nominee_id'], 'name': row['name']} for row in result]
+        result = []
+
+    nominees = [{
+        'id': row['nominee_id'],
+        'name': row['name'],
+        'detail': row['detail'],
+        'note': row['note'],
+        'citation': row['citation']
+    } for row in result]
+
+    film_name = result[0]['film'] if result else None  # Get the film name
     film_id = result[0]['film_id'] if result else None
     # Render the nomination-detail template with the nomination data
-    return render_template('nomination-detail.html', nominees=nominees,film_id=film_id)
+    return render_template(
+        'nomination-detail.html', 
+        nominees=nominees, 
+        film_id=film_id, 
+        film_name=film_name
+    )
+
+
 
 
 @APP.route('/search_winner', methods=['GET', 'POST'])

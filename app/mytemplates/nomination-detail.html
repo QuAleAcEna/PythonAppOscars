@@ -12,11 +12,23 @@
 </head>
 <body>
     <h1>Nomination Details</h1>
+    {% if film_name %}
+        <h2>Film: <a href="/films/{{ film_id }}/">{{ film_name }}</a></h2>
+    {% endif %}
     <ul>
         {% if nominees %}
             {% for nominee in nominees %}
                 <li>
                     <a href="/nominees/{{ nominee.id }}/">{{ nominee.name }}</a>
+                    {% if nominee.detail %}
+                        <p><strong>Detail:</strong> {{ nominee.detail }}</p>
+                    {% endif %}
+                    {% if nominee.note %}
+                        <p><strong>Note:</strong> {{ nominee.note }}</p>
+                    {% endif %}
+                    {% if nominee.citation %}
+                        <p><strong>Citation:</strong> {{ nominee.citation }}</p>
+                    {% endif %}
                 </li>
             {% endfor %}
         {% else %}
