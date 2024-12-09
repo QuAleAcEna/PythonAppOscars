@@ -338,13 +338,14 @@ def search_winner():
         result = mydb.execute('''
                 SELECT 
                     c.name AS category,
+                    c.original_name as ogcategory,
                     cer.year,
                     nom.name AS winner,
                     nom.id as nomination_id
                 FROM Nominations nom
                 JOIN Categories c ON nom.category = c.id
                 JOIN Ceremonies cer ON nom.ceremony = cer.ceremony
-                WHERE LOWER(c.name) = ? 
+                WHERE (LOWER(c.name) = ? or lower(c.original_name)=?)
                     AND (
                       cer.year = cast(? as integer) 
                     or (cer.year != cast(? as integer)
@@ -352,7 +353,7 @@ def search_winner():
                         and CAST(SUBSTR(cer.year, 6, 7) AS INTEGER)  = cast(substr(?,3,4) as integer))
                 )
                   AND nom.winner = 1;
-            ''', [category, year_input, year_input,year_input]).fetchone()
+            ''', [category,category, year_input, year_input,year_input]).fetchone()
 
         if result:
                 return render_template('winner-result.html', result=result)

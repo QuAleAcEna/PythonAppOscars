@@ -13,7 +13,11 @@
 <body>
     <h1>Winner Result</h1>
     {% if result %}
-        <p>Category: {{ result.category }}</p>
+        <p>Category: {{ result.category }} 
+            {% if result.ogcategory and result.ogcategory != result.category %}
+                ({{ result.ogcategory }})
+            {% endif %}
+        </p>
         <p>Year: {{ result.year }}</p>
         <p>Winner: 
             {% if result.nomination_id %}
